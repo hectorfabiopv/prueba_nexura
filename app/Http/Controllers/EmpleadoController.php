@@ -12,7 +12,8 @@ class EmpleadoController extends Controller
      */
     public function index()
     {
-        //
+        $empleados = Empleado::with(['area', 'roles'])->get();
+        return response()->json($empleados);
     }
 
     /**
@@ -28,7 +29,21 @@ class EmpleadoController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $validated = $request->validate([
+            'id'          => 'required|integer|unique:empleados,id',
+            'nombre'      => 'required|string|max:100',
+            'descripcion' => 'required|string',
+            'sexo'        => 'required|in:M,F,O',
+            'area_id'     => 'required|exists:areas,id',
+            'boletin'     => 'nullable|boolean',
+            'roles'       => 'required|array',
+            'roles.*'     => 'exists:roles,id',
+        ]);
+
+        $empleado = Empleado::create($validated);
+        $empleado->roles()->sync($request->roles);
+
+        return response()->json(['message' => 'Empleado creado correctamente'], 201);
     }
 
     /**
@@ -36,7 +51,7 @@ class EmpleadoController extends Controller
      */
     public function show(Empleado $empleado)
     {
-        //
+        return response()->json($empleado);
     }
 
     /**
@@ -52,7 +67,21 @@ class EmpleadoController extends Controller
      */
     public function update(Request $request, Empleado $empleado)
     {
-        //
+
+        $validated = $request->validate([
+            'nombre'      => 'required|string|max:100',
+            'descripcion' => 'required|string',
+            'sexo'        => 'required|in:M,F,O',
+            'area_id'     => 'required|exists:areas,id',
+            'boletin'     => 'nullable|boolean',
+            'roles'       => 'required|array',
+            'roles.*'     => 'exists:roles,id',
+        ]);
+
+        $empleado->update($validated);
+        $empleado->roles()->sync($request->roles);
+
+        return response()->json(['message' => 'Empleado actualizado correctamente']);
     }
 
     /**
@@ -60,6 +89,9 @@ class EmpleadoController extends Controller
      */
     public function destroy(Empleado $empleado)
     {
-        //
+        $empleado->roles()->detach();
+        $empleado->delete();
+
+        return response()->json(['message' => 'Empleado eliminado correctamente']);
     }
 }
