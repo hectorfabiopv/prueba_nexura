@@ -1,0 +1,34 @@
+<?php
+
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
+
+return new class extends Migration
+{
+    /**
+     * Run the migrations.
+     */
+    public function up(): void
+    {
+        Schema::create('empleados', function (Blueprint $table) {
+            $table->integer('id', false, true)->length(11)->primary();
+            $table->string('nombre', 255);
+            $table->string('email', 255);
+            $table->char('sexo', 1); // M, F, O
+            $table->unsignedInteger('area_id');
+            $table->foreign('area_id')->references('id')->on('areas')->onDelete('cascade');
+            $table->boolean('boletin')->default(false); // Se había especificado como un int(11); sin embargo, este dato es más atómico y por lo tanto ocupa menos espacio.            
+            $table->text('descripcion');
+
+        });
+    }
+
+    /**
+     * Reverse the migrations.
+     */
+    public function down(): void
+    {
+        Schema::dropIfExists('empleados');
+    }
+};
