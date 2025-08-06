@@ -79,18 +79,29 @@ class EmpleadoController extends Controller
 
         $validated = $request->validate([
             'nombre'      => 'required|string|max:100',
+            'email'       => 'required|email|unique:empleados,email,' . $empleado->id,
             'descripcion' => 'required|string',
             'sexo'        => 'required|in:M,F,O',
             'area_id'     => 'required|exists:areas,id',
             'boletin'     => 'nullable|boolean',
             'roles'       => 'required|array',
             'roles.*'     => 'exists:roles,id',
+        ]); 
+
+        // Actualiza datos básicos
+        $empleado->update([
+            'nombre'      => $validated['nombre'],
+            'email'       => $validated['email'],
+            'descripcion' => $validated['descripcion'],
+            'sexo'        => $validated['sexo'],
+            'area_id'     => $validated['area_id'],
+            'boletin'     => $request->has('boletin'),
         ]);
+    
+        // Sincroniza roles
+        $empleado->roles()->sync($validated['roles']);
 
-        $empleado->update($validated);
-        $empleado->roles()->sync($request->roles);
-
-        return response()->json(['message' => 'Empleado actualizado correctamente']);
+        return redirect()->route('empleados.index')->with('success', 'Empleado actualizado correctamente.');
     }
 
     /**
@@ -101,6 +112,6 @@ class EmpleadoController extends Controller
         $empleado->roles()->detach();
         $empleado->delete();
 
-        return response()->json(['message' => 'Empleado eliminado correctamente']);
+        return redirect()->route('empleados.index')->with('success', 'Empleado eliminado correctamente.');
     }
 }
