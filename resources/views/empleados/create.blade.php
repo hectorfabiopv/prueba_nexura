@@ -16,12 +16,12 @@
         </div>
     @endif
 
-    <div class="alert alert-info">
-        <strong>Los campos con asteriscos (*) son obligatorios.</strong>
-    </div>
-
     <form id="empleadoForm" action="{{ route('empleados.store') }}" method="POST">
         @csrf
+
+        <div class="alert alert-info">
+            <strong>Los campos con asteriscos (*) son obligatorios.</strong>
+        </div>
 
         {{-- Nombre --}}
         <div class="mb-3 row">
