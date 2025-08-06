@@ -4,15 +4,18 @@ use App\Http\Controllers\ProfileController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
+use App\Http\Controllers\EmpleadoController;
 
-Route::get('/', function () {
-    return Inertia::render('Welcome', [
-        'canLogin' => Route::has('login'),
-        'canRegister' => Route::has('register'),
-        'laravelVersion' => Application::VERSION,
-        'phpVersion' => PHP_VERSION,
-    ]);
-});
+Route::get('/', [EmpleadoController::class, 'index'])->name('empleados.index');
+Route::get('/empleados', [EmpleadoController::class, 'index']);
+
+Route::get('/empleados/create', [EmpleadoController::class, 'create'])->name('empleados.create');
+
+Route::get('/empleados/{empleado}/edit', [EmpleadoController::class, 'edit'])->name('empleados.edit');
+
+Route::put('/empleados/{empleado}', [EmpleadoController::class, 'update'])->name('empleados.update');
+
+Route::delete('/empleados/{empleado}', [EmpleadoController::class, 'destroy'])->name('empleados.destroy');
 
 Route::get('/dashboard', function () {
     return Inertia::render('Dashboard');

@@ -11,12 +11,12 @@ class Empleado extends Model
     protected $table = 'empleados';
 
     protected $fillable = [
-        'id',
         'nombre',
-        'descripcion',
+        'email',
         'sexo',
         'area_id',
         'boletin',
+        'descripcion'
     ];
 
     public function area()

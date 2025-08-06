@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Models\Empleado;
+use App\Models\Area;
+use App\Models\Rol;
 use Illuminate\Http\Request;
 
 class EmpleadoController extends Controller
@@ -13,7 +15,7 @@ class EmpleadoController extends Controller
     public function index()
     {
         $empleados = Empleado::with(['area', 'roles'])->get();
-        return response()->json($empleados);
+        return view('empleados.index', compact('empleados'));
     }
 
     /**
@@ -21,7 +23,10 @@ class EmpleadoController extends Controller
      */
     public function create()
     {
-        //
+        $areas = Area::all();
+        $roles = Rol::all();
+
+        return view('empleados.create', compact('areas', 'roles'));
     }
 
     /**
@@ -30,12 +35,12 @@ class EmpleadoController extends Controller
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'id'          => 'required|integer|unique:empleados,id',
             'nombre'      => 'required|string|max:100',
-            'descripcion' => 'required|string',
+            'email' => 'required|email|unique:empleados,email',
             'sexo'        => 'required|in:M,F,O',
             'area_id'     => 'required|exists:areas,id',
             'boletin'     => 'nullable|boolean',
+            'descripcion' => 'required|string',
             'roles'       => 'required|array',
             'roles.*'     => 'exists:roles,id',
         ]);
@@ -43,7 +48,7 @@ class EmpleadoController extends Controller
         $empleado = Empleado::create($validated);
         $empleado->roles()->sync($request->roles);
 
-        return response()->json(['message' => 'Empleado creado correctamente'], 201);
+        return redirect()->route('empleados.index')->with('success', 'Empleado creado correctamente');
     }
 
     /**
@@ -59,7 +64,11 @@ class EmpleadoController extends Controller
      */
     public function edit(Empleado $empleado)
     {
-        //
+        $areas = Area::all();
+        $roles = Rol::all();
+        $empleado->load('roles');
+
+        return view('empleados.edit', compact('empleado', 'areas', 'roles'));
     }
 
     /**

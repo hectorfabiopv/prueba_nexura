@@ -10,7 +10,7 @@ class Rol extends Model
 
     protected $table = 'roles';
 
-    protected $fillable = ['id', 'nombre'];
+    protected $fillable = ['nombre'];
 
     public function empleados()
     {

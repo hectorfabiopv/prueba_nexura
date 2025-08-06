@@ -10,7 +10,7 @@ class Area extends Model
 
     protected $table = 'areas';
 
-    protected $fillable = ['id', 'nombre'];
+    protected $fillable = ['nombre'];
 
     public function empleados()
     {

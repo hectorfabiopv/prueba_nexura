@@ -12,5 +12,7 @@ Route::get('test-api', function () {
     return response()->json(['ok' => true]);
 });
 
+// Route::get('empleados', [EmpleadoController::class, 'index']);
+Route::apiResource('empleados', EmpleadoController::class);
 Route::get('areas', [AreaController::class, 'index']);
 Route::get('roles', [RolController::class, 'index']);
