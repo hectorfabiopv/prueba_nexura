@@ -27,7 +27,7 @@
         <div class="mb-3 row">
             <label for="nombre" class="col-md-3 col-form-label"><strong>Nombre completo *</strong></label>
             <div class="col-md-9">
-                <input type="text" name="nombre" id="nombre" class="form-control" value="{{ old('nombre') }}" required placeholder="Nombre completo del empleado">
+                <input type="text" name="nombre" id="nombre" class="form-control" value="{{ old('nombre') }}" placeholder="Nombre completo del empleado">
                 <div class="invalid-feedback">El nombre es obligatorio y debe tener al menos 3 caracteres.</div>
             </div>
         </div>
@@ -36,7 +36,7 @@
         <div class="mb-3 row">
             <label for="email" class="col-md-3 col-form-label"><strong>Correo electrónico *</strong></label>
             <div class="col-md-9">
-                <input type="email" name="email" id="email" class="form-control" value="{{ old('email') }}" required placeholder="Correo electrónico">
+                <input type="text" name="email" id="email" class="form-control" value="{{ old('email') }}" placeholder="Correo electrónico">
                 <div class="invalid-feedback">Este campo es obligatorio y debe ingresar un correo válido.</div>
             </div>
         </div>
@@ -65,7 +65,7 @@
         <div class="mb-3 row">
             <label for="area_id" class="col-md-3 col-form-label"><strong>Área *</strong></label>
             <div class="col-md-9">
-                <select name="area_id" id="area_id" class="form-select" required>
+                <select name="area_id" id="area_id" class="form-select">
                     <option value="">Seleccione...</option>
                     @foreach ($areas as $area)
                         <option value="{{ $area->id }}" {{ old('area_id') == $area->id ? 'selected' : '' }}>
@@ -81,7 +81,7 @@
         <div class="mb-3 row">
             <label for="descripcion" class="col-md-3 col-form-label"><strong>Descripción *</strong></label>
             <div class="col-md-9">
-                <textarea name="descripcion" id="descripcion" class="form-control" required placeholder="Descripción de la experiencia del empleado">{{ old('descripcion') }}</textarea>
+                <textarea name="descripcion" id="descripcion" class="form-control" placeholder="Descripción de la experiencia del empleado">{{ old('descripcion') }}</textarea>
                 <div class="invalid-feedback">Este campo es obligatorio y debe tener al menos 10 caracteres.</div>
             </div>
         </div>

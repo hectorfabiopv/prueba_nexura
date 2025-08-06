@@ -1,63 +1,85 @@
 document.addEventListener("DOMContentLoaded", function () {
-
     const form = document.getElementById("empleadoForm");
     if (!form) return;
 
-    form.addEventListener("submit", function (e) {
-        // Limpiar errores anteriores
-        form.querySelectorAll('.is-invalid').forEach(el => el.classList.remove('is-invalid'));
+    // ========================
+    // Funciones de validación
+    // ========================
 
-        let isValid = true;
+    function validateNombre() {
+        const input = form.querySelector('#nombre');
+        const value = input.value.trim();
+        toggleInvalid(input, value.length < 3);
+    }
 
-        // Validar nombre
-        const nombre = form.querySelector('#nombre');
-        if (!nombre.value.trim() || nombre.value.length < 3) {
-            nombre.classList.add('is-invalid');
-            isValid = false;
-        }
+    function validateEmail() {
+        const input = form.querySelector('#email');
+        const regex = /^[\w.%+\-]+@[\w.\-]+\.[A-Za-z]{2,}$/;
+        toggleInvalid(input, !regex.test(input.value.trim()));
+    }
 
-        // Validar email
-        const email = form.querySelector('#email');
-        const emailRegex = /^[\w.%+\-]+@[\w.\-]+\.[A-Za-z]{2,}$/;
-        if (!emailRegex.test(email.value)) {
-            email.classList.add('is-invalid');
-            isValid = false;
-        }
+    function validateSexo() {
+        const radios = form.querySelectorAll('input[name="sexo"]');
+        const error = document.getElementById('sexoError');
+        const checked = [...radios].some(r => r.checked);
+        error.style.display = checked ? 'none' : 'block';
+        return checked;
+    }
 
-        // Validar sexo
-        const sexo = form.querySelector('#sexo');
-        if (!sexo.value) {
-            sexo.classList.add('is-invalid');
-            isValid = false;
-        }
+    function validateArea() {
+        const select = form.querySelector('#area_id');
+        toggleInvalid(select, !select.value);
+    }
 
-        // Validar área
-        const area = form.querySelector('#area_id');
-        if (!area.value) {
-            area.classList.add('is-invalid');
-            isValid = false;
-        }
+    function validateDescripcion() {
+        const textarea = form.querySelector('#descripcion');
+        toggleInvalid(textarea, textarea.value.trim().length < 10);
+    }
 
-        // Validar descripción
-        const descripcion = form.querySelector('#descripcion');
-        if (!descripcion.value.trim() || descripcion.value.length < 10) {
-            descripcion.classList.add('is-invalid');
-            isValid = false;
-        }
+    function validateRoles() {
+        const wrapper = form.querySelector('.roles-wrapper');
+        const checked = wrapper.querySelectorAll('input[name="roles[]"]:checked').length > 0;
+        const feedback = wrapper.querySelector('.invalid-feedback');
+        feedback.style.display = checked ? 'none' : 'block';
+        return checked;
+    }
 
-        // Validar roles
-        const rolesWrapper = form.querySelector('.roles-wrapper');
-        const roles = rolesWrapper.querySelectorAll('input[name="roles[]"]:checked');
-        const roleWarning = rolesWrapper.querySelector('.invalid-feedback');
-            
-        if (roles.length === 0) {
-            roleWarning.style.display = 'block';
-            isValid = false;
+    function toggleInvalid(element, hasError) {
+        if (hasError) {
+            element.classList.add('is-invalid');
         } else {
-            roleWarning.style.display = 'none';
+            element.classList.remove('is-invalid');
         }
+    }
 
-        if (!isValid) {
+    // ========================
+    // Eventos por campo
+    // ========================
+
+    form.querySelector('#nombre')?.addEventListener('blur', validateNombre);
+    form.querySelector('#email')?.addEventListener('blur', validateEmail);
+    form.querySelectorAll('input[name="sexo"]').forEach(r => r.addEventListener('change', validateSexo));
+    form.querySelector('#area_id')?.addEventListener('change', validateArea);
+    form.querySelector('#descripcion')?.addEventListener('blur', validateDescripcion);
+    form.querySelectorAll('input[name="roles[]"]').forEach(c => c.addEventListener('change', validateRoles));
+
+    // ========================
+    // Validación al enviar
+    // ========================
+
+    form.addEventListener("submit", function (e) {
+        // Ejecuta todas las validaciones
+        validateNombre();
+        validateEmail();
+        const validSexo = validateSexo();
+        validateArea();
+        validateDescripcion();
+        const validRoles = validateRoles();
+
+        // Si algún campo tiene is-invalid o feedback visible, cancela
+        const errors = form.querySelectorAll('.is-invalid').length > 0 || !validSexo || !validRoles;
+
+        if (errors) {
             e.preventDefault();
         }
     });
