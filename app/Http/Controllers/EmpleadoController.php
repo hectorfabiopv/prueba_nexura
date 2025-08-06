@@ -7,6 +7,8 @@ use App\Models\Area;
 use App\Models\Rol;
 use Illuminate\Http\Request;
 
+use Illuminate\Support\Facades\Validator;
+
 class EmpleadoController extends Controller
 {
     /**
@@ -34,29 +36,30 @@ class EmpleadoController extends Controller
      */
     public function store(Request $request)
     {
-        $validated = $request->validate([
-            'nombre'      => 'required|string|max:100',
-            'email' => 'required|email|unique:empleados,email',
-            'sexo'        => 'required|in:M,F,O',
-            'area_id'     => 'required|exists:areas,id',
-            'boletin'     => 'nullable|boolean',
-            'descripcion' => 'required|string',
-            'roles'       => 'required|array',
-            'roles.*'     => 'exists:roles,id',
+
+        $validator = Validator::make($request->all(), $this->rules());
+
+        if ($validator->fails()) {
+            return redirect()
+                ->back()
+                ->withErrors($validator)
+                ->withInput();
+        }
+        
+        $validated = $validator->validated();
+
+        $empleado = Empleado::create([
+            'nombre'      => $validated['nombre'],
+            'email'       => $validated['email'],
+            'sexo'        => $validated['sexo'],
+            'area_id'     => $validated['area_id'],
+            'descripcion' => $validated['descripcion'],
+            'boletin'     => $request->has('boletin'),
         ]);
 
-        $empleado = Empleado::create($validated);
-        $empleado->roles()->sync($request->roles);
+        $empleado->roles()->sync($validated['roles']);
 
-        return redirect()->route('empleados.index')->with('success', 'Empleado creado correctamente');
-    }
-
-    /**
-     * Display the specified resource.
-     */
-    public function show(Empleado $empleado)
-    {
-        return response()->json($empleado);
+        return redirect()->route('empleados.index')->with('success', 'Empleado creado correctamente.');
     }
 
     /**
@@ -76,29 +79,17 @@ class EmpleadoController extends Controller
      */
     public function update(Request $request, Empleado $empleado)
     {
+        $validated = $request->validate($this->rules($empleado));
 
-        $validated = $request->validate([
-            'nombre'      => 'required|string|max:100',
-            'email'       => 'required|email|unique:empleados,email,' . $empleado->id,
-            'descripcion' => 'required|string',
-            'sexo'        => 'required|in:M,F,O',
-            'area_id'     => 'required|exists:areas,id',
-            'boletin'     => 'nullable|boolean',
-            'roles'       => 'required|array',
-            'roles.*'     => 'exists:roles,id',
-        ]); 
-
-        // Actualiza datos básicos
         $empleado->update([
             'nombre'      => $validated['nombre'],
             'email'       => $validated['email'],
-            'descripcion' => $validated['descripcion'],
             'sexo'        => $validated['sexo'],
             'area_id'     => $validated['area_id'],
+            'descripcion' => $validated['descripcion'],
             'boletin'     => $request->has('boletin'),
         ]);
-    
-        // Sincroniza roles
+
         $empleado->roles()->sync($validated['roles']);
 
         return redirect()->route('empleados.index')->with('success', 'Empleado actualizado correctamente.');
@@ -113,5 +104,24 @@ class EmpleadoController extends Controller
         $empleado->delete();
 
         return redirect()->route('empleados.index')->with('success', 'Empleado eliminado correctamente.');
+    }
+
+    /**
+     * Get validation rules.
+     */
+    private function rules(Empleado $empleado = null): array
+    {
+        $id = $empleado?->id ?? 'NULL';
+
+        return [
+            'nombre'      => 'required|string|max:100',
+            'email'       => "required|email|unique:empleados,email,$id",
+            'sexo'        => 'required|in:M,F',
+            'area_id'     => 'required|exists:areas,id',
+            'boletin'     => 'nullable|boolean',
+            'descripcion' => 'required|string|min:10|max:1000',
+            'roles'       => 'required|array|min:1',
+            'roles.*'     => 'exists:roles,id',
+        ];
     }
 }
