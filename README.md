@@ -11,11 +11,11 @@ Este proyecto Laravel permite registrar, listar, editar y eliminar empleados, in
 
 ## 📦 Requisitos del sistema
 
-- PHP 8.2 o superior
-- Composer
-- Node.js y npm
-- MySQL o MariaDB
-- Laravel 11 o superior
+- PHP 8.4.11
+- Composer 2.8.10
+- Node.js y npm (no utilizados)
+- MySQL 9.4.0
+- Laravel 12.21.0
 
 ---
 
@@ -24,8 +24,8 @@ Este proyecto Laravel permite registrar, listar, editar y eliminar empleados, in
 ### 1. Clonar el repositorio
 
 ```bash
-git clone https://github.com/tu-usuario/tu-repo.git
-cd tu-repo
+git clone https://github.com/hectorfabiopv/prueba_nexura prueba_nexura
+cd prueba_nexura
 
 2. Instalar dependencias PHP
 
@@ -119,17 +119,17 @@ Haz clic en “+ Nuevo Empleado” y llena el formulario para registrar un nuevo
 ⸻
 
 🧰 Tecnologías utilizadas
-	•	Laravel 11
+	•	Laravel 12.21.0
 	•	Bootstrap 5
-	•	PHP 8.2
-	•	MySQL
+	•	PHP 8.4.11
+	•	MySQL 9.4.0
 	•	JavaScript Vanilla para validaciones frontend
 
 ⸻
 
-🧑 Autor
+Autor
 
-Desarrollado por Héctor Fabio Padilla Vasco
+Desarrollado por Hector Fabio Padilla Vasco
 Contacto: hectorfabiopv@gmail.com
 
 ⸻
